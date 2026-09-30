@@ -1,0 +1,8 @@
+/* Base styles. The HUD/menu agent owns the rest of this file. */
+:root { --ui-font: 'M PLUS Rounded 1c', 'Kosugi Maru', system-ui, sans-serif; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: #000; color: #fff; font-family: var(--ui-font); user-select: none; }
+#app { position: fixed; inset: 0; }
+#app canvas { display: block; width: 100%; height: 100%; }
+#ui { position: fixed; inset: 0; pointer-events: none; z-index: 10; }
+#ui .interactive, #ui button, #ui input, #ui select { pointer-events: auto; }
