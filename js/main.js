@@ -52,7 +52,27 @@ async function game() {
   mc.ready = true;
 }
 
-(params.get('view') === 'map' ? viewMap() : game()).catch((err) => {
+async function viewChar() {
+  const map = await engine.loadMap(params.get('map') || 'test');
+  mc.map = map;
+  const { Mannequin, POSES } = await import('./char/mannequin.js');
+  mc.POSES = POSES; mc.Mannequin = Mannequin;
+  const list = [null, ...POSES.map((p) => p.id)];
+  mc.mans = list.map((id, i) => {
+    const m = new Mannequin({ engine, name: 'm' + i, isLocal: i === 0 });
+    m.root.position.set(-4 + i * 1.0, 0, -5);
+    engine.scene.add(m.root);
+    m.setPose(id);
+    return m;
+  });
+  const cam = engine.camera;
+  cam.position.copy(vec(params.get('cam')) || new THREE.Vector3(0, 1.2, 5));
+  cam.lookAt(vec(params.get('look')) || new THREE.Vector3(0, 0.7, 0));
+  engine.onUpdate((dt) => { for (const m of mc.mans) m.update(dt); });
+  mc.ready = true;
+}
+
+(params.get('view') === 'map' ? viewMap() : params.get('view') === 'char' ? viewChar() : game()).catch((err) => {
   console.error(err);
   const d = document.createElement('pre');
   d.style.cssText = 'position:fixed;left:12px;bottom:12px;color:#f66;font:12px monospace;z-index:99;white-space:pre-wrap;max-width:90vw';
